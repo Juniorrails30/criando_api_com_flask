@@ -7,6 +7,7 @@ def create_app():
     from .views.user_routes import bp_user
     app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///banco.db'
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+    app.config["SECRET_KEY"] = 'SUA_SECRET_KEY'
     app.register_blueprint(bp_user)
     db.init_app(app)
 
