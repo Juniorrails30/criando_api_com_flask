@@ -35,20 +35,20 @@ def token_required(f):
 
 
 @bp_user.route("/users", methods=["GET"])
-@token_required
-def get_users(current_user):
-    if current_user.admin:
-        return {"message": "Acesso negado!"}
+# @token_required
+def get_users():
+    # if current_user.admin:
+    #     return {"message": "Acesso negado!"}
     all_users = UserModel.query.all()
     resultado = users_schemas.dump(all_users)
-    return users_schemas.jsonify(resultado)
+    return (resultado)
 
 
 @bp_user.route("/users/<public_id>", methods=["GET"])
 def get_user(public_id):
     user = UserModel.query.filter_by(public_id=public_id)
     resultado = users_schemas.dump(user)
-    return users_schemas.jsonify(resultado)
+    return (resultado)
 
 
 @bp_user.route("/users", methods=["POST"])
@@ -97,11 +97,11 @@ def login():
     auth = request.authorization
 
     if not auth or not auth.username or not auth.password:
-        return make_response({"message": "erro"})
+        return make_response({"message": "erro"}), 401
     user = UserModel.query.filter_by(username=auth.username).first()
 
     if not user:
-        return make_response({"message": "erro"})
+        return make_response({"message": "erro"}), 401
 
     if check_password_hash(user.password, auth.password):
         token = jwt.encode({"public_id": user.public_id,
@@ -110,3 +110,4 @@ def login():
                            current_app.config["SECRET_KEY"])
 
         return jsonify({"token": token})
+    return {"message": "login ou senha estão errados!"}
